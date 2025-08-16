@@ -4,11 +4,25 @@ import stage from '../assets/stage-1.8d1424476177f9643817.jpg'
 export const Game1 = () => {
     const [view, setView] = useState(null);
     const [clickStatus, setClickStatus] = useState(false)
+    const [positionX, setPositionX] = useState();
+    const [positionY, setPositionY] = useState();
+    const [width, setWidth] = useState();
+    const [height, setHeight] = useState();
 
     useEffect(() => {
-        
+            const img = document.querySelector('#image');
+            const rect = img.getBoundingClientRect();
+            //console.log(rect)
+            //console.log('Top:', rect.top);
+            //console.log('Left', rect.right)
+            setPositionX(rect.top + (0.072 * rect.height));
+            setPositionY(rect.left + 0.795 * rect.width);
+            setWidth(rect.width * 0.02);
+            setHeight(rect.height * 0.05);
+
             const handleClick = (event) => {
-                setView({ x: event.clientX, y: event.clientY });
+                setView({ x: event.pageY, y: event.pageX });
+                
                 setClickStatus(prev => !prev)
                 
             };
@@ -24,8 +38,8 @@ export const Game1 = () => {
 
     const handleEvent = () => {
         //console.log("Clicked");
-        if (view.x > 638 && view.x < 650) {
-            if (view.y > 68 && view.y < 88) {
+        if (view.x > positionX && view.x < (positionX+height)) {
+            if (view.y > positionY && view.y < (positionY+width)) {
                 console.log("you win")
             } else {
                 console.log("Incorrect")
@@ -34,48 +48,52 @@ export const Game1 = () => {
             console.log("Incorrect")
         }
     }
+    console.log(positionX,positionY);
+    console.log(view)
     return (
         <>
             <h2>Find Waldo</h2>
-            <div style={{border: '2px solid black',minWidth: '800px',maxWidth:'800px', margin: '0px auto'}}>
-            <img src={stage} width='100%' style={{position:'absolute', minWidth:'800px',maxWidth:'800px'}}/>
-            {view && clickStatus? (
-                
-                    <div
-                    style={{
-                        width: "20px",
-                        height: "20px",
-                        position: "absolute", // absolute positioning for pixel accuracy
-                        top: view.y - 10,
-                        left: view.x - 10,
-                        border: "1px solid black",
-                        background: "yellow"
-                    }}
-                    >
-                    yes
-                    </div>
+            <div style={{minWidth: '100vw',maxWidth:'200px', margin: '0px 5px'}}>
+                <img id='image' src={stage} width='100vw' style={{position:'absolute', minWidth:'100vw',maxWidth:'600px'}}/>
+                {view && clickStatus? (
                     
-                
-  
-            ): null}
-            <div style={{
-                border: '3px solid black',
-                width: '12px',
-                height: '20px',
-                position: 'absolute',
-                top: '68px',
-                left: '638px'
-            }}></div>
+                        <div
+                        style={{
+                            width: "20px",
+                            height: "20px",
+                            position: "absolute", // absolute positioning for pixel accuracy
+                            top: view.x - 10,
+                            left: view.y - 10,
+                            border: "5px solid white"
+                        }}
+                        >
+                        
+                        </div>
+                        
+                    
+    
+                ): null}
+                <div style={{
+                    border: '3px solid black',
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    position: 'absolute',
+                    top: `${positionX}px`,
+                    left: `${positionY}px`
+                }}></div>
             </div>
             
             {clickStatus && (
                 <div 
                 style={{
                     width: 'fit-content',
-                    background: 'darkgrey',
+                    background: 'darkblue',
                     position: 'absolute',
-                    bottom: '0px',
-                    left: '50%'
+                    top: view.x + 10,
+                    left: view.y - 20,
+                    fontSize: '1.5rem',
+                    color: 'white',
+                    cursor: 'pointer'
                 }} 
                 onClick={handleEvent}>
                     Waldo?
